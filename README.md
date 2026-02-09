@@ -27,18 +27,23 @@ Backend-driven with modular architecture, transaction-based booking logic, and R
 - **JWT Authentication** – Secure token-based authentication with bcrypt password hashing
 - **Role-Based Access Control** – Admin (Provider) and User roles with permission management
 - **RESTful API Architecture** – Clean, modular API design following REST principles
-- **Working Hours Management** – Day-wise availability configuration with timezone support
-- **Break Management System** – Support for lunch breaks, prayer times, and emergency blocks
+- **Working Hours Management** – Day-wise availability configuration with timezone support and shift types (Morning, Evening, Full Day)
+- **Break Management System** – Support for lunch breaks, prayer times, and emergency blocks with recurring options
+- **Holiday Management** – Support for holidays and special days off with recurring options
 - **Service Duration Handling** – Flexible appointment lengths based on service type
 - **Analytics & Reporting** – Dashboard statistics and monthly trend analysis
 - **Input Validation** – Request validation using class-validator and Zod schemas
 - **Error Handling** – Centralized exception handling with meaningful error responses
 
 ### Frontend Features
-- **Responsive Dashboard** – Real-time statistics and appointment overview
+- **Responsive Dashboard** – Real-time statistics and appointment overview with charts
 - **Appointment Management** – View, update, and cancel appointments
-- **Authentication UI** – Login and registration with JWT token management
-- **Status Management** – Update appointment status (Pending, Confirmed, Completed, Cancelled)
+- **Authentication UI** – Login and registration with NextAuth.js integration
+- **Status Management** – Update appointment status (Pending, Confirmed, Completed, Cancelled, No Show)
+- **Mobile Responsive** – Fully responsive design for all screen sizes
+- **Interactive Charts** – Visual analytics using Recharts
+- **Toast Notifications** – User feedback for actions
+- **Confirm Dialogs** – Safe deletion and cancellation confirmations
 
 ---
 
@@ -49,9 +54,9 @@ Backend-driven with modular architecture, transaction-based booking logic, and R
 - **Framework:** NestJS (Node.js)
 - **Database:** PostgreSQL
 - **ORM:** Prisma
-- **Authentication:** JWT (jsonwebtoken) with bcrypt
+- **Authentication:** JWT (@nestjs/jwt, passport-jwt) with bcrypt
 - **Validation:** class-validator, class-transformer, Zod
-- **Date Handling:** date-fns
+- **Date Handling:** date-fns, date-fns-tz
 - **Architecture:** Modular architecture with dependency injection
 
 ### 🔹 Frontend
@@ -59,8 +64,11 @@ Backend-driven with modular architecture, transaction-based booking logic, and R
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
 - **HTTP Client:** Axios
+- **Authentication:** NextAuth.js
+- **Charts:** Recharts
 - **Icons:** Lucide React
 - **Date Utilities:** date-fns
+- **Utilities:** clsx, tailwind-merge
 
 ### 🔹 DevOps / Tools
 - **Version Control:** Git
@@ -95,18 +103,23 @@ backend/
 │   ├── services/             # Service definitions and pricing
 │   ├── working-hours/        # Day-wise availability management
 │   ├── breaks/               # Break interval management
+│   ├── holidays/             # Holiday management
 │   ├── appointments/         # Booking logic with transactions
 │   ├── slot-engine/          # Core: Dynamic slot calculation algorithm
 │   ├── analytics/            # Dashboard statistics and reports
+│   ├── users/                # User management
 │   ├── common/               # Shared utilities, decorators, guards
 │   │   ├── decorators/       # Custom decorators (CurrentUser, Roles)
 │   │   ├── guards/           # Auth guards, role guards
 │   │   └── filters/          # Exception filters
+│   ├── app.module.ts         # Root application module
 │   └── main.ts               # Application entry point
 ├── prisma/
 │   ├── schema.prisma         # Database schema definition
-│   └── migrations/           # Database migration files
-└── test/                     # E2E and unit tests
+│   ├── migrations/           # Database migration files
+│   └── seed.ts               # Database seeding script
+├── check-data.ts             # Data verification utility
+└── check-users.ts            # User verification utility
 ```
 
 ### Request Flow Example (Booking Appointment)
@@ -137,7 +150,9 @@ This approach ensures slots are always accurate and reflect real-time availabili
 
 ## API Documentation
 
-**Base URL:** `http://localhost:3001/api` (Development)
+**Base URL:** `http://localhost:3000/api` (Development)
+
+**Postman Collection:** A complete Postman collection is available at the root directory (`postman_collection.json`) for easy API testing.
 
 **Authentication:** Bearer Token (JWT) in Authorization header
 
@@ -183,6 +198,14 @@ This approach ensures slots are always accurate and reflect real-time availabili
 | POST | `/breaks` | Create break | Yes (Admin) |
 | GET | `/breaks?providerId=xxx` | Get breaks | Yes |
 | DELETE | `/breaks/:id` | Delete break | Yes (Admin) |
+
+### Holiday Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/holidays` | Create holiday | Yes (Admin) |
+| GET | `/holidays?providerId=xxx` | Get holidays | Yes |
+| DELETE | `/holidays/:id` | Delete holiday | Yes (Admin) |
 
 ### Slot Engine (Core)
 
@@ -231,7 +254,10 @@ A provider has multiple working hour configurations (one per day)
 A provider offers multiple services with different durations
 
 **Provider** (1) ↔ (M) **Break**  
-A provider can have multiple breaks (lunch, prayer, emergency)
+A provider can have multiple breaks (lunch, prayer, emergency) with recurring options
+
+**Provider** (1) ↔ (M) **Holiday**  
+A provider can have multiple holidays with recurring options
 
 **Provider** (1) ↔ (M) **Appointment**  
 A provider has multiple appointments
@@ -270,25 +296,25 @@ JWT_SECRET="your-secret-key-change-in-production"
 JWT_EXPIRES_IN="7d"
 
 # Server Configuration
-PORT=3001
+PORT=3000
 NODE_ENV="development"
 
 # CORS
-FRONTEND_URL="http://localhost:3000"
+FRONTEND_URL="http://localhost:3001"
 ```
 
 **Variable Descriptions:**
 - `DATABASE_URL` – PostgreSQL connection string (required)
 - `JWT_SECRET` – Secret key for signing JWT tokens (required, change in production)
 - `JWT_EXPIRES_IN` – Token expiration time (default: 7 days)
-- `PORT` – Backend server port (default: 3001)
+- `PORT` – Backend server port (default: 3000)
 - `NODE_ENV` – Environment mode (development/production)
 - `FRONTEND_URL` – Frontend URL for CORS configuration
 
 ### Frontend (.env.local)
 
 ```env
-NEXT_PUBLIC_API_URL="http://localhost:3001/api"
+NEXT_PUBLIC_API_URL="http://localhost:3000/api"
 ```
 
 **Variable Descriptions:**
@@ -338,7 +364,7 @@ npm run prisma:seed
 npm run start:dev
 ```
 
-Backend will run on: `http://localhost:3001`
+Backend will run on: `http://localhost:3000`
 
 ### Step 3: Setup Frontend
 
@@ -350,19 +376,19 @@ cd frontend
 npm install
 
 # Create environment file
-echo "NEXT_PUBLIC_API_URL=http://localhost:3001/api" > .env.local
+echo "NEXT_PUBLIC_API_URL=http://localhost:3000/api" > .env.local
 
 # Start frontend development server
 npm run dev
 ```
 
-Frontend will run on: `http://localhost:3000`
+Frontend will run on: `http://localhost:3001`
 
 ### Step 4: Verify Installation
 
-1. Open browser and navigate to `http://localhost:3000`
+1. Open browser and navigate to `http://localhost:3001`
 2. Register a new user account
-3. Backend API documentation (if configured): `http://localhost:3001/api`
+3. Backend API documentation (if configured): `http://localhost:3000/api`
 
 ---
 
@@ -373,7 +399,7 @@ Frontend will run on: `http://localhost:3000`
 ```bash
 # Development
 npm run start:dev          # Start backend in development mode with hot reload
-npm run start:debug        # Start backend in debug mode
+npm run start              # Start backend in standard mode
 
 # Production
 npm run build              # Build backend for production
@@ -384,28 +410,18 @@ npm run prisma:generate    # Generate Prisma Client
 npm run prisma:migrate     # Run database migrations
 npm run prisma:seed        # Seed database with sample data
 npm run prisma:studio      # Open Prisma Studio (database GUI)
-
-# Testing
-npm run test               # Run unit tests
-npm run test:e2e           # Run end-to-end tests
-npm run test:cov           # Run tests with coverage
-
-# Code Quality
-npm run lint               # Run ESLint
-npm run format             # Format code with Prettier
 ```
 
 ### Frontend Commands
 
 ```bash
 # Development
-npm run dev                # Start frontend in development mode
+npm run dev                # Start frontend in development mode (port 3001)
 npm run build              # Build frontend for production
 npm run start              # Start frontend in production mode
 
 # Code Quality
 npm run lint               # Run ESLint
-npm run type-check         # Run TypeScript type checking
 ```
 
 ---

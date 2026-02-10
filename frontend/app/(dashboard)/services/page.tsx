@@ -39,6 +39,12 @@ export default function ServicesPage() {
     e.preventDefault();
     try {
       const providerId = localStorage.getItem('providerId');
+      
+      if (!providerId) {
+        setToast({ message: 'Provider ID not found. Please logout and login again.', type: 'error' });
+        return;
+      }
+      
       await api.post('/services', {
         ...formData,
         providerId,
@@ -51,9 +57,11 @@ export default function ServicesPage() {
         price: 0,
         description: '',
       });
-    } catch (error) {
+      setToast({ message: 'Service created successfully', type: 'success' });
+    } catch (error: any) {
       console.error('Failed to create service', error);
-      setToast({ message: 'Failed to create service', type: 'error' });
+      const errorMsg = error.response?.data?.message || 'Failed to create service';
+      setToast({ message: Array.isArray(errorMsg) ? errorMsg.join(', ') : errorMsg, type: 'error' });
     }
   };
 

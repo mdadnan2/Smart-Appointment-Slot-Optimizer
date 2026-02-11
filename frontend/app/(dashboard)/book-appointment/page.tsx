@@ -137,26 +137,26 @@ export default function BookAppointment() {
 
   return (
     <>
-      <main className="p-4 sm:p-6 lg:p-8 animate-fade-in">
+      <main className="min-h-screen p-4 sm:p-6 lg:p-8 animate-fade-in">
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Book Appointment</h1>
           <p className="text-sm sm:text-base text-gray-600">Select date and time for your appointment</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Selection Panel */}
-          <div className="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6 shadow-md">
-            <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Appointment Details</h2>
+          <div className="lg:col-span-2 bg-white rounded-2xl p-5 sm:p-6 shadow-md">
+            <h2 className="text-lg sm:text-xl font-bold mb-5 sm:mb-6">Appointment Details</h2>
 
             {/* Provider Selection */}
-            <div className="mb-6">
+            <div className="mb-5">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Select Provider
               </label>
               <select
                 value={selectedProvider}
                 onChange={(e) => setSelectedProvider(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-base min-h-[44px]"
               >
                 {providers.map((provider) => (
                   <option key={provider.id} value={provider.id}>
@@ -167,14 +167,14 @@ export default function BookAppointment() {
             </div>
 
             {/* Service Selection */}
-            <div className="mb-6">
+            <div className="mb-5">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Select Service
               </label>
               <select
                 value={selectedService}
                 onChange={(e) => setSelectedService(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-base min-h-[44px]"
               >
                 {services.map((service) => (
                   <option key={service.id} value={service.id}>
@@ -185,7 +185,7 @@ export default function BookAppointment() {
             </div>
 
             {/* Date Selection */}
-            <div className="mb-6">
+            <div className="mb-5">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Select Date
               </label>
@@ -195,7 +195,7 @@ export default function BookAppointment() {
                 onChange={(e) => setSelectedDate(e.target.value)}
                 min={format(new Date(), 'yyyy-MM-dd')}
                 max={format(addDays(new Date(), 30), 'yyyy-MM-dd')}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-base min-h-[44px]"
               />
             </div>
 
@@ -214,12 +214,12 @@ export default function BookAppointment() {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 max-h-96 overflow-y-auto">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-96 overflow-y-auto">
                   {slots.map((slot, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedSlot(slot)}
-                      className={`px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 transition text-xs sm:text-sm ${
+                      className={`px-4 py-3 lg:py-3 rounded-lg border-2 transition text-sm min-h-[44px] ${
                         selectedSlot?.startTime === slot.startTime
                           ? 'border-blue-600 bg-blue-50 text-blue-700 font-semibold'
                           : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
@@ -234,8 +234,8 @@ export default function BookAppointment() {
           </div>
 
           {/* Summary Panel */}
-          <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-md h-fit">
-            <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Booking Summary</h2>
+          <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-md h-fit">
+            <h2 className="text-lg sm:text-xl font-bold mb-5 sm:mb-6">Booking Summary</h2>
 
             <div className="space-y-4">
               <div>
@@ -284,7 +284,7 @@ export default function BookAppointment() {
             <button
               onClick={handleBooking}
               disabled={!selectedSlot || loading}
-              className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
             >
               {loading ? 'Booking...' : 'Confirm Booking'}
             </button>

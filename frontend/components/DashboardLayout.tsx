@@ -33,7 +33,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, []);
 
   return (
-    <div className="transition-all duration-300 ml-0 lg:ml-[var(--sidebar-width)] pt-14 lg:pt-0">
+    <div className="transition-all duration-300 ml-0 lg:ml-[var(--sidebar-width)] pt-16 lg:pt-0 px-1 lg:px-0">
       {children}
     </div>
   );

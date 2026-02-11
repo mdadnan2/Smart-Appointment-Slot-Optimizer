@@ -37,18 +37,18 @@ export default function Dashboard() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return <div className="flex items-center justify-center min-h-screen text-sm">Loading...</div>;
   }
 
   return (
-    <main className="p-4 sm:p-6 animate-fade-in overflow-x-hidden">
+    <main className="min-h-screen p-4 sm:p-6 animate-fade-in">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3 pr-14 lg:pr-0">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Dashboard</h1>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           <StatsCard
             title="Total Patient"
             value={stats?.totalPatients || 0}
@@ -70,7 +70,7 @@ export default function Dashboard() {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
           <PatientsSummary stats={stats} />
           <TodayAppointment appointments={stats?.todayAppointmentsList || []} />
         </div>

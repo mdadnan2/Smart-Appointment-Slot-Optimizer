@@ -24,7 +24,7 @@ export default function Login() {
       localStorage.setItem('userRole', data.user.role);
       localStorage.setItem('userName', data.user.name);
       localStorage.setItem('userEmail', data.user.email);
-      
+
       // If admin, fetch provider ID
       if (data.user.role === 'ADMIN') {
         const providerRes = await api.get('/providers');

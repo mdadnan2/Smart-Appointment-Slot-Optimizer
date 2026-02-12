@@ -24,12 +24,12 @@ export default function Sidebar() {
     setIsCollapsed(collapsed);
     
     // Set initial sidebar width
-    document.documentElement.style.setProperty('--sidebar-width', collapsed ? '5rem' : '14rem');
+    document.documentElement.style.setProperty('--sidebar-width', collapsed ? '5rem' : '16rem');
   }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      document.documentElement.style.setProperty('--sidebar-width', isCollapsed ? '5rem' : '14rem');
+      document.documentElement.style.setProperty('--sidebar-width', isCollapsed ? '5rem' : '16rem');
       window.dispatchEvent(new Event('sidebar-change'));
     }
   }, [isCollapsed]);
@@ -75,120 +75,118 @@ export default function Sidebar() {
       />
     )}
 
-    <aside className={`fixed top-0 h-full bg-white border-gray-200 flex flex-col transition-all duration-300 overflow-hidden z-40 w-64 lg:w-56 ${
-      isCollapsed ? 'lg:w-20' : 'lg:w-56'
-    } lg:left-0 lg:border-r lg:translate-x-0 left-0 border-r ${
-      isMobileOpen ? 'translate-x-0' : '-translate-x-full'
-    }`}>
+    <aside className={`fixed top-0 h-full bg-white border-gray-200 flex flex-col transition-all duration-300 overflow-hidden z-40 w-64 lg:border-r lg:translate-x-0 left-0 border-r ${
+      isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+    } ${isCollapsed ? 'lg:w-20' : 'lg:w-64'}`}>
       {/* Header */}
-      <div className={`p-4 lg:p-3 border-b border-gray-200 flex items-center mt-14 lg:mt-0 ${isCollapsed ? 'lg:justify-center' : ''}`}>
-        <div className={`w-10 h-10 lg:w-10 lg:h-10 ${isCollapsed ? 'lg:w-8 lg:h-8' : ''} rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-base flex-shrink-0`}>
+      <div className={`p-4 lg:p-4 border-b border-gray-200 flex items-center mt-14 lg:mt-0 ${isCollapsed ? 'lg:justify-center' : ''}`}>
+        <div className={`w-10 h-10 ${isCollapsed ? 'lg:w-10 lg:h-10' : 'lg:w-12 lg:h-12'} rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-base lg:text-lg flex-shrink-0`}>
           {user?.name?.charAt(0) || 'D'}
         </div>
         <div className={`ml-3 overflow-hidden ${isCollapsed ? 'lg:hidden' : ''}`}>
-          <h2 className="font-bold text-sm text-gray-900 truncate">{user?.name || 'User'}</h2>
+          <h2 className="font-bold text-sm lg:text-base text-gray-900 truncate">{user?.name || 'User'}</h2>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-3 lg:p-2 space-y-1.5 lg:space-y-1 overflow-y-auto">
+      <nav className="flex-1 p-3 lg:p-3 space-y-1.5 lg:space-y-2 overflow-y-auto">
         <Link
           href={userRole === 'ADMIN' ? '/dashboard' : '/patient-dashboard'}
           onClick={() => setIsMobileOpen(false)}
-          className={`flex items-center gap-3 px-4 py-3 lg:py-2 ${isCollapsed ? 'lg:justify-center lg:px-2 lg:gap-0' : 'lg:gap-2 lg:px-3'} rounded-lg transition-all min-h-[44px] ${
+          className={`flex items-center gap-3 px-4 py-3 lg:py-2.5 ${isCollapsed ? 'lg:justify-center lg:px-2 lg:gap-0' : 'lg:gap-3 lg:px-4'} rounded-lg transition-all min-h-[44px] lg:min-h-0 ${
             isActive(userRole === 'ADMIN' ? '/dashboard' : '/patient-dashboard')
               ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
               : 'text-gray-600 hover:bg-gray-100'
           }`}
           title="Dashboard"
         >
-          <LayoutDashboard size={20} className="lg:w-[18px] lg:h-[18px] flex-shrink-0" />
-          <span className={`font-medium text-sm lg:text-xs ${isCollapsed ? 'lg:hidden' : ''}`}>Dashboard</span>
+          <LayoutDashboard size={20} className="lg:w-5 lg:h-5 flex-shrink-0" />
+          <span className={`font-medium text-sm lg:text-sm ${isCollapsed ? 'lg:hidden' : ''}`}>Dashboard</span>
         </Link>
         <Link
           href="/appointments"
           onClick={() => setIsMobileOpen(false)}
-          className={`flex items-center gap-3 px-4 py-3 lg:py-2 ${isCollapsed ? 'lg:justify-center lg:px-2 lg:gap-0' : 'lg:gap-2 lg:px-3'} rounded-lg transition-all min-h-[44px] ${
+          className={`flex items-center gap-3 px-4 py-3 lg:py-2.5 ${isCollapsed ? 'lg:justify-center lg:px-2 lg:gap-0' : 'lg:gap-3 lg:px-4'} rounded-lg transition-all min-h-[44px] lg:min-h-0 ${
             isActive('/appointments')
               ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
               : 'text-gray-600 hover:bg-gray-100'
           }`}
           title="Appointments"
         >
-          <Calendar size={20} className="lg:w-[18px] lg:h-[18px] flex-shrink-0" />
-          <span className={`font-medium text-sm lg:text-xs ${isCollapsed ? 'lg:hidden' : ''}`}>Appointments</span>
+          <Calendar size={20} className="lg:w-5 lg:h-5 flex-shrink-0" />
+          <span className={`font-medium text-sm lg:text-sm ${isCollapsed ? 'lg:hidden' : ''}`}>Appointments</span>
         </Link>
         {userRole === 'ADMIN' && (
           <>
             <Link
               href="/services"
               onClick={() => setIsMobileOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 lg:py-2 ${isCollapsed ? 'lg:justify-center lg:px-2 lg:gap-0' : 'lg:gap-2 lg:px-3'} rounded-lg transition-all min-h-[44px] ${
+              className={`flex items-center gap-3 px-4 py-3 lg:py-2.5 ${isCollapsed ? 'lg:justify-center lg:px-2 lg:gap-0' : 'lg:gap-3 lg:px-4'} rounded-lg transition-all min-h-[44px] lg:min-h-0 ${
                 isActive('/services')
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
               title="Services"
             >
-              <Briefcase size={20} className="lg:w-[18px] lg:h-[18px] flex-shrink-0" />
-              <span className={`font-medium text-sm lg:text-xs ${isCollapsed ? 'lg:hidden' : ''}`}>Services</span>
+              <Briefcase size={20} className="lg:w-5 lg:h-5 flex-shrink-0" />
+              <span className={`font-medium text-sm lg:text-sm ${isCollapsed ? 'lg:hidden' : ''}`}>Services</span>
             </Link>
             <Link
               href="/shifts"
               onClick={() => setIsMobileOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 lg:py-2 ${isCollapsed ? 'lg:justify-center lg:px-2 lg:gap-0' : 'lg:gap-2 lg:px-3'} rounded-lg transition-all min-h-[44px] ${
+              className={`flex items-center gap-3 px-4 py-3 lg:py-2.5 ${isCollapsed ? 'lg:justify-center lg:px-2 lg:gap-0' : 'lg:gap-3 lg:px-4'} rounded-lg transition-all min-h-[44px] lg:min-h-0 ${
                 isActive('/shifts')
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
               title="Shifts"
             >
-              <Clock size={20} className="lg:w-[18px] lg:h-[18px] flex-shrink-0" />
-              <span className={`font-medium text-sm lg:text-xs ${isCollapsed ? 'lg:hidden' : ''}`}>Shifts</span>
+              <Clock size={20} className="lg:w-5 lg:h-5 flex-shrink-0" />
+              <span className={`font-medium text-sm lg:text-sm ${isCollapsed ? 'lg:hidden' : ''}`}>Shifts</span>
             </Link>
             <Link
               href="/holidays"
               onClick={() => setIsMobileOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 lg:py-2 ${isCollapsed ? 'lg:justify-center lg:px-2 lg:gap-0' : 'lg:gap-2 lg:px-3'} rounded-lg transition-all min-h-[44px] ${
+              className={`flex items-center gap-3 px-4 py-3 lg:py-2.5 ${isCollapsed ? 'lg:justify-center lg:px-2 lg:gap-0' : 'lg:gap-3 lg:px-4'} rounded-lg transition-all min-h-[44px] lg:min-h-0 ${
                 isActive('/holidays')
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
               title="Holidays"
             >
-              <CalendarOff size={20} className="lg:w-[18px] lg:h-[18px] flex-shrink-0" />
-              <span className={`font-medium text-sm lg:text-xs ${isCollapsed ? 'lg:hidden' : ''}`}>Holidays</span>
+              <CalendarOff size={20} className="lg:w-5 lg:h-5 flex-shrink-0" />
+              <span className={`font-medium text-sm lg:text-sm ${isCollapsed ? 'lg:hidden' : ''}`}>Holidays</span>
             </Link>
           </>
         )}
         <Link
           href="/profile"
           onClick={() => setIsMobileOpen(false)}
-          className={`flex items-center gap-3 px-4 py-3 lg:py-2 ${isCollapsed ? 'lg:justify-center lg:px-2 lg:gap-0' : 'lg:gap-2 lg:px-3'} rounded-lg transition-all min-h-[44px] ${
+          className={`flex items-center gap-3 px-4 py-3 lg:py-2.5 ${isCollapsed ? 'lg:justify-center lg:px-2 lg:gap-0' : 'lg:gap-3 lg:px-4'} rounded-lg transition-all min-h-[44px] lg:min-h-0 ${
             isActive('/profile')
               ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
               : 'text-gray-600 hover:bg-gray-100'
           }`}
           title="Profile"
         >
-          <User size={20} className="lg:w-[18px] lg:h-[18px] flex-shrink-0" />
-          <span className={`font-medium text-sm lg:text-xs ${isCollapsed ? 'lg:hidden' : ''}`}>Profile</span>
+          <User size={20} className="lg:w-5 lg:h-5 flex-shrink-0" />
+          <span className={`font-medium text-sm lg:text-sm ${isCollapsed ? 'lg:hidden' : ''}`}>Profile</span>
         </Link>
         <button
           onClick={() => {
             setShowLogoutModal(true);
             setLogoutTimer(5);
           }}
-          className={`flex items-center gap-3 px-4 py-3 lg:py-2 ${isCollapsed ? 'lg:justify-center lg:px-2 lg:gap-0' : 'lg:gap-2 lg:px-3'} rounded-lg transition-all min-h-[44px] text-gray-600 hover:bg-red-50 hover:text-red-600 w-full`}
+          className={`flex items-center gap-3 px-4 py-3 lg:py-2.5 ${isCollapsed ? 'lg:justify-center lg:px-2 lg:gap-0' : 'lg:gap-3 lg:px-4'} rounded-lg transition-all min-h-[44px] lg:min-h-0 text-gray-600 hover:bg-red-50 hover:text-red-600 w-full`}
           title="Logout"
         >
-          <LogOut size={20} className="lg:w-[18px] lg:h-[18px] flex-shrink-0" />
-          <span className={`font-medium text-sm lg:text-xs ${isCollapsed ? 'lg:hidden' : ''}`}>Logout</span>
+          <LogOut size={20} className="lg:w-5 lg:h-5 flex-shrink-0" />
+          <span className={`font-medium text-sm lg:text-sm ${isCollapsed ? 'lg:hidden' : ''}`}>Logout</span>
         </button>
       </nav>
 
       {/* Collapse Button - Desktop Only */}
-      <div className="p-3 lg:p-2 border-t border-gray-200 hidden lg:block">
+      <div className="p-3 border-t border-gray-200 hidden lg:block">
         <button
           type="button"
           onClick={(e) => {
@@ -197,13 +195,13 @@ export default function Sidebar() {
             setIsCollapsed(newState);
             localStorage.setItem('sidebarCollapsed', String(newState));
           }}
-          className={`w-full flex items-center justify-center ${isCollapsed ? 'px-2' : 'gap-1 px-3'} py-2 border-2 border-blue-600 rounded-lg text-blue-600 hover:bg-blue-50 transition-all font-medium text-xs`}
+          className={`w-full flex items-center justify-center ${isCollapsed ? 'px-2' : 'gap-2 px-4'} py-2.5 border-2 border-blue-600 rounded-lg text-blue-600 hover:bg-blue-50 transition-all font-medium text-sm`}
         >
           {isCollapsed ? (
-            <ChevronRight size={16} className="flex-shrink-0" />
+            <ChevronRight size={18} className="flex-shrink-0" />
           ) : (
             <>
-              <ChevronLeft size={16} />
+              <ChevronLeft size={18} />
               <span>Collapse</span>
             </>
           )}

@@ -106,43 +106,83 @@ export default function Appointments() {
 
   return (
     <main className="min-h-screen p-4 sm:p-6 animate-fade-in">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
-          <h1 className="text-xl sm:text-2xl font-bold">All Appointments</h1>
-          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-            {userRole === 'USER' && (
-              <a
-                href="/book-appointment"
-                className="px-4 py-2.5 lg:py-1.5 text-sm lg:text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold whitespace-nowrap min-h-[44px] lg:min-h-0 flex items-center justify-center"
-              >
-                Book Appointment
-              </a>
-            )}
-            <button
-              onClick={() => setFilter('today')}
-              className={`px-4 py-2.5 lg:py-1.5 text-sm lg:text-xs rounded-lg transition whitespace-nowrap min-h-[44px] lg:min-h-0 ${filter === 'today' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
-            >
-              Today
-            </button>
-            <button
-              onClick={() => setFilter('week')}
-              className={`px-4 py-2.5 lg:py-1.5 text-sm lg:text-xs rounded-lg transition whitespace-nowrap min-h-[44px] lg:min-h-0 ${filter === 'week' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
-            >
-              Week
-            </button>
-            <button
-              onClick={() => setFilter('month')}
-              className={`px-4 py-2.5 lg:py-1.5 text-sm lg:text-xs rounded-lg transition whitespace-nowrap min-h-[44px] lg:min-h-0 ${filter === 'month' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
-            >
-              Month
-            </button>
-            <button
-              onClick={() => setFilter('all')}
-              className={`px-4 py-2.5 lg:py-1.5 text-sm lg:text-xs rounded-lg transition whitespace-nowrap min-h-[44px] lg:min-h-0 ${filter === 'all' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
-            >
-              All
-            </button>
-          </div>
+      {/* Mobile Filters & Book Button */}
+      <div className="md:hidden flex flex-col gap-3 mb-6">
+        <h1 className="text-xl font-bold">All Appointments</h1>
+        {userRole === 'USER' && (
+          <a
+            href="/book-appointment"
+            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg shadow hover:bg-blue-700 transition text-center"
+          >
+            Book Appointment
+          </a>
+        )}
+        <div className="flex flex-row gap-2 overflow-x-auto pb-1">
+          <button
+            onClick={() => setFilter('today')}
+            className={`px-4 py-2 rounded-lg transition whitespace-nowrap text-sm font-medium ${filter === 'today' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-700'}`}
+          >
+            Today
+          </button>
+          <button
+            onClick={() => setFilter('week')}
+            className={`px-4 py-2 rounded-lg transition whitespace-nowrap text-sm font-medium ${filter === 'week' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-700'}`}
+          >
+            Week
+          </button>
+          <button
+            onClick={() => setFilter('month')}
+            className={`px-4 py-2 rounded-lg transition whitespace-nowrap text-sm font-medium ${filter === 'month' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-700'}`}
+          >
+            Month
+          </button>
+          <button
+            onClick={() => setFilter('all')}
+            className={`px-4 py-2 rounded-lg transition whitespace-nowrap text-sm font-medium ${filter === 'all' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-700'}`}
+          >
+            All
+          </button>
         </div>
+      </div>
+
+      {/* Desktop Filters & Book Button */}
+      <div className="hidden md:flex flex-row justify-between items-center mb-6 gap-3">
+        <h1 className="text-2xl font-bold">All Appointments</h1>
+        <div className="flex flex-wrap gap-2 w-full md:w-auto">
+          {userRole === 'USER' && (
+            <a
+              href="/book-appointment"
+              className="px-4 py-2.5 lg:py-1.5 text-sm lg:text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold whitespace-nowrap min-h-[44px] lg:min-h-0 flex items-center justify-center"
+            >
+              Book Appointment
+            </a>
+          )}
+          <button
+            onClick={() => setFilter('today')}
+            className={`px-4 py-2.5 lg:py-1.5 text-sm lg:text-xs rounded-lg transition whitespace-nowrap min-h-[44px] lg:min-h-0 ${filter === 'today' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+          >
+            Today
+          </button>
+          <button
+            onClick={() => setFilter('week')}
+            className={`px-4 py-2.5 lg:py-1.5 text-sm lg:text-xs rounded-lg transition whitespace-nowrap min-h-[44px] lg:min-h-0 ${filter === 'week' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+          >
+            Week
+          </button>
+          <button
+            onClick={() => setFilter('month')}
+            className={`px-4 py-2.5 lg:py-1.5 text-sm lg:text-xs rounded-lg transition whitespace-nowrap min-h-[44px] lg:min-h-0 ${filter === 'month' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+          >
+            Month
+          </button>
+          <button
+            onClick={() => setFilter('all')}
+            className={`px-4 py-2.5 lg:py-1.5 text-sm lg:text-xs rounded-lg transition whitespace-nowrap min-h-[44px] lg:min-h-0 ${filter === 'all' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+          >
+            All
+          </button>
+        </div>
+      </div>
 
         {/* Desktop Table */}
         <div className="hidden md:block bg-white rounded-xl shadow-md overflow-hidden">

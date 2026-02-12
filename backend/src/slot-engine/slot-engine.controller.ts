@@ -1,7 +1,6 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
-import { SlotEngineService } from './slot-engine.service';
-import { GetSlotsDto } from './slot-engine.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { SlotEngineService } from './slot-engine.service';
 
 @Controller('slots')
 @UseGuards(JwtAuthGuard)

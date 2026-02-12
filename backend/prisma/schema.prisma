@@ -49,6 +49,8 @@ model User {
   appointments Appointment[]
   provider     Provider?
 
+  // ✅ OPTIMIZATION: Index for faster email lookups during login
+  @@index([email])
   @@map("users")
 }
 
@@ -57,7 +59,7 @@ model Provider {
   userId                 String   @unique
   specialty              String
   timezone               String   @default("UTC")
-  defaultServiceDuration Int      @default(30) // minutes
+  defaultServiceDuration Int      @default(30)
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 
@@ -68,6 +70,8 @@ model Provider {
   appointments Appointment[]
   holidays     Holiday[]
 
+  // ✅ OPTIMIZATION: Index for faster provider lookups
+  @@index([userId])
   @@map("providers")
 }
 
@@ -76,29 +80,33 @@ model WorkingHour {
   providerId String
   dayOfWeek  DayOfWeek
   shiftType  ShiftType @default(FULL_DAY)
-  startTime  String // HH:mm format (e.g., "09:00")
-  endTime    String // HH:mm format (e.g., "18:00")
+  startTime  String
+  endTime    String
   isActive   Boolean   @default(true)
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 
   provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
 
+  // ✅ OPTIMIZATION: Composite index for slot engine queries
+  @@index([providerId, dayOfWeek, isActive])
   @@map("working_hours")
 }
 
 model Break {
-  id         String   @id @default(uuid())
-  providerId String
-  title      String
-  startTime  DateTime
-  endTime    DateTime
-  isRecurring Boolean @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id          String   @id @default(uuid())
+  providerId  String
+  title       String
+  startTime   DateTime
+  endTime     DateTime
+  isRecurring Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
 
+  // ✅ OPTIMIZATION: Composite index for slot engine date range queries
+  @@index([providerId, startTime, endTime])
   @@map("breaks")
 }
 
@@ -113,6 +121,8 @@ model Holiday {
 
   provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
 
+  // ✅ OPTIMIZATION: Composite index for holiday lookups
+  @@index([providerId, date])
   @@map("holidays")
 }
 
@@ -120,7 +130,7 @@ model Service {
   id          String   @id @default(uuid())
   providerId  String
   name        String
-  duration    Int // minutes
+  duration    Int
   price       Float?
   description String?
   isActive    Boolean  @default(true)
@@ -130,6 +140,8 @@ model Service {
   provider     Provider      @relation(fields: [providerId], references: [id], onDelete: Cascade)
   appointments Appointment[]
 
+  // ✅ OPTIMIZATION: Composite index for active service queries
+  @@index([providerId, isActive])
   @@map("services")
 }
 
@@ -149,6 +161,15 @@ model Appointment {
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   service  Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
-  @@index([providerId, startTime, endTime])
+  // ✅ OPTIMIZATION: Critical indexes for performance
+  // Index 1: Slot conflict detection (most critical)
+  @@index([providerId, startTime, endTime, status])
+  
+  // Index 2: User appointment queries
+  @@index([userId, startTime])
+  
+  // Index 3: Analytics queries (monthly stats)
+  @@index([providerId, status, startTime])
+  
   @@map("appointments")
 }

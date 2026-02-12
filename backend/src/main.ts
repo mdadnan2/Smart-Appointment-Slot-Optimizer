@@ -5,6 +5,11 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Health check endpoint
+  app.getHttpAdapter().get('/health', (req, res) => {
+    res.json({ status: 'ok' });
+  });
+
   // Enable CORS
   app.enableCors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',

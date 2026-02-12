@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
-import { Clock, Plus, Trash2, CalendarOff } from 'lucide-react';
+import { Clock, Plus, Trash2, CalendarOff, Edit } from 'lucide-react';
 import Toast from '@/components/Toast';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import { format, startOfWeek, addDays } from 'date-fns';
@@ -15,6 +15,7 @@ export default function ShiftsPage() {
   const [holidays, setHolidays] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     dayOfWeek: 'MONDAY',
     shiftType: 'MORNING',
@@ -55,27 +56,64 @@ export default function ShiftsPage() {
     }
   };
 
+  const convertTo24Hour = (hour: string, minute: string, period: string) => {
+    let h = parseInt(hour);
+    if (period === 'PM' && h !== 12) h += 12;
+    if (period === 'AM' && h === 12) h = 0;
+    return `${h.toString().padStart(2, '0')}:${minute}`;
+  };
+
+  const convertTo12Hour = (time24: string) => {
+    const [hours, minutes] = time24.split(':').map(Number);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours % 12 || 12;
+    return {
+      hour: displayHours.toString().padStart(2, '0'),
+      minute: minutes.toString().padStart(2, '0'),
+      period,
+    };
+  };
+
+  const handleEdit = (shift: any) => {
+    setEditingId(shift.id);
+    const start = convertTo12Hour(shift.startTime);
+    const end = convertTo12Hour(shift.endTime);
+    setFormData({
+      dayOfWeek: shift.dayOfWeek,
+      shiftType: shift.shiftType,
+      startHour: start.hour,
+      startMinute: start.minute,
+      startPeriod: start.period,
+      endHour: end.hour,
+      endMinute: end.minute,
+      endPeriod: end.period,
+    });
+    setShowModal(true);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const providerId = localStorage.getItem('providerId');
       
-      // Convert 12-hour to 24-hour format
-      const convertTo24Hour = (hour: string, minute: string, period: string) => {
-        let h = parseInt(hour);
-        if (period === 'PM' && h !== 12) h += 12;
-        if (period === 'AM' && h === 12) h = 0;
-        return `${h.toString().padStart(2, '0')}:${minute}`;
-      };
-
-      await api.post('/working-hours', {
+      const payload = {
         providerId,
         dayOfWeek: formData.dayOfWeek,
         shiftType: formData.shiftType,
         startTime: convertTo24Hour(formData.startHour, formData.startMinute, formData.startPeriod),
         endTime: convertTo24Hour(formData.endHour, formData.endMinute, formData.endPeriod),
-      });
+      };
+
+      if (editingId) {
+        await api.patch(`/working-hours/${editingId}`, payload);
+        setToast({ message: 'Shift updated successfully', type: 'success' });
+      } else {
+        await api.post('/working-hours', payload);
+        setToast({ message: 'Shift created successfully', type: 'success' });
+      }
+      
       setShowModal(false);
+      setEditingId(null);
       fetchShifts();
       setFormData({
         dayOfWeek: 'MONDAY',
@@ -87,9 +125,10 @@ export default function ShiftsPage() {
         endMinute: '00',
         endPeriod: 'PM',
       });
-    } catch (error) {
-      console.error('Failed to create shift', error);
-      setToast({ message: 'Failed to create shift', type: 'error' });
+    } catch (error: any) {
+      console.error('Failed to save shift', error);
+      const errorMsg = error.response?.data?.message || 'Failed to save shift';
+      setToast({ message: errorMsg, type: 'error' });
     }
   };
 
@@ -199,12 +238,20 @@ export default function ShiftsPage() {
                             </div>
                             <span className="text-sm lg:text-xs text-gray-500">{shift.shiftType}</span>
                           </div>
-                          <button
-                            onClick={() => handleDelete(shift.id)}
-                            className="text-red-600 hover:text-red-700 p-1 min-h-[44px] min-w-[44px] lg:min-h-0 lg:min-w-0 flex items-center justify-center"
-                          >
-                            <Trash2 size={16} className="lg:w-[14px] lg:h-[14px]" />
-                          </button>
+                          <div className="flex gap-1">
+                            <button
+                              onClick={() => handleEdit(shift)}
+                              className="text-blue-600 hover:text-blue-700 p-1 min-h-[44px] min-w-[44px] lg:min-h-0 lg:min-w-0 flex items-center justify-center"
+                            >
+                              <Edit size={16} className="lg:w-[14px] lg:h-[14px]" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(shift.id)}
+                              className="text-red-600 hover:text-red-700 p-1 min-h-[44px] min-w-[44px] lg:min-h-0 lg:min-w-0 flex items-center justify-center"
+                            >
+                              <Trash2 size={16} className="lg:w-[14px] lg:h-[14px]" />
+                            </button>
+                          </div>
                         </div>
                       )})}
                     </div>
@@ -218,7 +265,7 @@ export default function ShiftsPage() {
     {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Add Working Shift</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-4">{editingId ? 'Edit Working Shift' : 'Add Working Shift'}</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Day</label>
@@ -322,7 +369,20 @@ export default function ShiftsPage() {
               <div className="flex flex-col sm:flex-row gap-3 mt-6">
                 <button
                   type="button"
-                  onClick={() => setShowModal(false)}
+                  onClick={() => {
+                    setShowModal(false);
+                    setEditingId(null);
+                    setFormData({
+                      dayOfWeek: 'MONDAY',
+                      shiftType: 'MORNING',
+                      startHour: '09',
+                      startMinute: '00',
+                      startPeriod: 'AM',
+                      endHour: '06',
+                      endMinute: '00',
+                      endPeriod: 'PM',
+                    });
+                  }}
                   className="flex-1 px-4 py-3 lg:py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition min-h-[44px] lg:min-h-0"
                 >
                   Cancel
@@ -331,7 +391,7 @@ export default function ShiftsPage() {
                   type="submit"
                   className="flex-1 px-4 py-3 lg:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition min-h-[44px] lg:min-h-0"
                 >
-                  Add Shift
+                  {editingId ? 'Update Shift' : 'Add Shift'}
                 </button>
               </div>
             </form>

@@ -146,14 +146,11 @@ export class SlotEngineService {
     startTime: string,
     endTime: string,
   ): TimeInterval {
-    const [startHour, startMinute] = startTime.split(':').map(Number);
-    const [endHour, endMinute] = endTime.split(':').map(Number);
+    const startParts = startTime.split(':').map(Number);
+    const endParts = endTime.split(':').map(Number);
 
-    const start = new Date(date);
-    start.setHours(startHour, startMinute, 0, 0);
-
-    const end = new Date(date);
-    end.setHours(endHour, endMinute, 0, 0);
+    const start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), startParts[0], startParts[1] || 0, 0, 0);
+    const end = new Date(date.getFullYear(), date.getMonth(), date.getDate(), endParts[0], endParts[1] || 0, 0, 0);
 
     return { start, end };
   }

@@ -10,6 +10,7 @@ export default function ServicesPage() {
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     duration: 30,
@@ -35,6 +36,17 @@ export default function ServicesPage() {
     }
   };
 
+  const handleEdit = (service: any) => {
+    setEditingId(service.id);
+    setFormData({
+      name: service.name,
+      duration: service.duration,
+      price: service.price,
+      description: service.description || '',
+    });
+    setShowModal(true);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -45,11 +57,19 @@ export default function ServicesPage() {
         return;
       }
       
-      await api.post('/services', {
-        ...formData,
-        providerId,
-      });
+      if (editingId) {
+        await api.patch(`/services/${editingId}`, formData);
+        setToast({ message: 'Service updated successfully', type: 'success' });
+      } else {
+        await api.post('/services', {
+          ...formData,
+          providerId,
+        });
+        setToast({ message: 'Service created successfully', type: 'success' });
+      }
+      
       setShowModal(false);
+      setEditingId(null);
       fetchServices();
       setFormData({
         name: '',
@@ -57,10 +77,9 @@ export default function ServicesPage() {
         price: 0,
         description: '',
       });
-      setToast({ message: 'Service created successfully', type: 'success' });
     } catch (error: any) {
-      console.error('Failed to create service', error);
-      const errorMsg = error.response?.data?.message || 'Failed to create service';
+      console.error('Failed to save service', error);
+      const errorMsg = error.response?.data?.message || 'Failed to save service';
       setToast({ message: Array.isArray(errorMsg) ? errorMsg.join(', ') : errorMsg, type: 'error' });
     }
   };
@@ -108,12 +127,20 @@ export default function ServicesPage() {
               <div key={service.id} className="bg-white rounded-xl shadow-md p-5 lg:p-4 hover:shadow-lg transition">
                 <div className="flex justify-between items-start mb-3 lg:mb-2">
                   <h3 className="font-bold text-base lg:text-sm text-gray-800">{service.name}</h3>
-                  <button
-                    onClick={() => handleDelete(service.id)}
-                    className="text-red-600 hover:text-red-700 p-1 min-h-[44px] min-w-[44px] lg:min-h-0 lg:min-w-0 flex items-center justify-center"
-                  >
-                    <Trash2 size={18} className="lg:w-4 lg:h-4" />
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEdit(service)}
+                      className="text-blue-600 hover:text-blue-700 p-1 min-h-[44px] min-w-[44px] lg:min-h-0 lg:min-w-0 flex items-center justify-center"
+                    >
+                      <Edit size={18} className="lg:w-4 lg:h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(service.id)}
+                      className="text-red-600 hover:text-red-700 p-1 min-h-[44px] min-w-[44px] lg:min-h-0 lg:min-w-0 flex items-center justify-center"
+                    >
+                      <Trash2 size={18} className="lg:w-4 lg:h-4" />
+                    </button>
+                  </div>
                 </div>
                 
                 {service.description && (
@@ -150,7 +177,7 @@ export default function ServicesPage() {
     {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Add Service</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-4">{editingId ? 'Edit Service' : 'Add Service'}</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Service Name</label>
@@ -205,7 +232,11 @@ export default function ServicesPage() {
               <div className="flex flex-col sm:flex-row gap-3 mt-6">
                 <button
                   type="button"
-                  onClick={() => setShowModal(false)}
+                  onClick={() => {
+                    setShowModal(false);
+                    setEditingId(null);
+                    setFormData({ name: '', duration: 30, price: 0, description: '' });
+                  }}
                   className="flex-1 px-4 py-3 lg:py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition min-h-[44px] lg:min-h-0"
                 >
                   Cancel
@@ -214,7 +245,7 @@ export default function ServicesPage() {
                   type="submit"
                   className="flex-1 px-4 py-3 lg:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition min-h-[44px] lg:min-h-0"
                 >
-                  Add Service
+                  {editingId ? 'Update Service' : 'Add Service'}
                 </button>
               </div>
             </form>

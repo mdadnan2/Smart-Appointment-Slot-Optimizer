@@ -178,7 +178,7 @@ export default function BookAppointment() {
               >
                 {services.map((service) => (
                   <option key={service.id} value={service.id}>
-                    {service.name} - {service.duration} min {service.price && `($${service.price})`}
+                    {service.name} - {service.duration} min {service.price && `(₹${service.price})`}
                   </option>
                 ))}
               </select>
@@ -275,7 +275,7 @@ export default function BookAppointment() {
                 <div className="pt-4 border-t">
                   <p className="text-sm text-gray-500">Total</p>
                   <p className="text-xl sm:text-2xl font-bold text-blue-600">
-                    ${services.find(s => s.id === selectedService)?.price}
+                    ₹{services.find(s => s.id === selectedService)?.price}
                   </p>
                 </div>
               )}

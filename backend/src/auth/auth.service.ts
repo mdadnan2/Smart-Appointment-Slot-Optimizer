@@ -1,9 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import * as crypto from 'crypto';
 import { PrismaService } from '../common/prisma.service';
-import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto } from './auth.dto';
+import { RegisterDto, LoginDto } from './auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -72,61 +71,6 @@ export class AuthService {
       },
       token,
     };
-  }
-
-  async forgotPassword(dto: ForgotPasswordDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: dto.email },
-    });
-
-    if (!user) {
-      return { message: 'If email exists, reset link will be sent' };
-    }
-
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
-
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: {
-        resetToken,
-        resetTokenExpiry,
-      },
-    });
-
-    // TODO: Send email with reset token
-    // For now, return token in response (remove in production)
-    return { 
-      message: 'Password reset token generated',
-      resetToken, // Remove this in production
-    };
-  }
-
-  async resetPassword(dto: ResetPasswordDto) {
-    const user = await this.prisma.user.findFirst({
-      where: { resetToken: dto.token },
-    });
-
-    if (!user || !user.resetTokenExpiry) {
-      throw new BadRequestException('Invalid or expired reset token');
-    }
-
-    if (new Date() > user.resetTokenExpiry) {
-      throw new BadRequestException('Reset token has expired');
-    }
-
-    const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
-
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: {
-        password: hashedPassword,
-        resetToken: null,
-        resetTokenExpiry: null,
-      },
-    });
-
-    return { message: 'Password reset successful' };
   }
 
   private generateToken(user: any) {

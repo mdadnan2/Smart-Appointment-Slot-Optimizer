@@ -10,6 +10,7 @@ import {
   isWithinInterval,
   getDay
 } from 'date-fns';
+import { zonedTimeToUtc } from 'date-fns-tz';
 
 export interface TimeSlot {
   startTime: string;
@@ -108,7 +109,7 @@ export class SlotEngineService {
 
     // Create working intervals from all shifts
     const workingIntervals: TimeInterval[] = providerData.workingHours.map(wh => 
-      this.createWorkingInterval(date, wh.startTime, wh.endTime)
+      this.createWorkingInterval(date, wh.startTime, wh.endTime, providerData.timezone)
     );
 
     // Convert breaks to intervals
@@ -140,18 +141,26 @@ export class SlotEngineService {
   }
 
   /**
-   * ✅ OPTIMIZED: Simplified interval creation
+   * ✅ OPTIMIZED: Simplified interval creation with timezone support
    */
   private createWorkingInterval(
     date: Date,
     startTime: string,
     endTime: string,
+    timezone: string,
   ): TimeInterval {
     const startParts = startTime.split(':').map(Number);
     const endParts = endTime.split(':').map(Number);
 
-    const start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), startParts[0], startParts[1] || 0, 0, 0);
-    const end = new Date(date.getFullYear(), date.getMonth(), date.getDate(), endParts[0], endParts[1] || 0, 0, 0);
+    // Create dates in provider's timezone, then convert to UTC
+    const start = zonedTimeToUtc(
+      new Date(date.getFullYear(), date.getMonth(), date.getDate(), startParts[0], startParts[1] || 0, 0, 0),
+      timezone
+    );
+    const end = zonedTimeToUtc(
+      new Date(date.getFullYear(), date.getMonth(), date.getDate(), endParts[0], endParts[1] || 0, 0, 0),
+      timezone
+    );
 
     return { start, end };
   }

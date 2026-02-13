@@ -36,7 +36,7 @@ async function main() {
     create: {
       userId: admin.id,
       specialty: 'General Consultation',
-      timezone: 'UTC',
+      timezone: 'Asia/Kolkata',
       defaultServiceDuration: 30,
     },
   });

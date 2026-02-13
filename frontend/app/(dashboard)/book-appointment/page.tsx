@@ -208,9 +208,9 @@ export default function BookAppointment() {
                 <div className="text-center py-8 text-gray-500">Loading slots...</div>
               ) : slots.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-gray-400 mb-2">No available slots for this date</p>
+                  <p className="text-gray-600 font-medium mb-2">No available slots for this date.</p>
                   <p className="text-sm text-gray-500">
-                    Try selecting a weekday (Mon-Fri) or check browser console for details
+                    The provider may not be working on this day, or all slots are fully booked.
                   </p>
                 </div>
               ) : (

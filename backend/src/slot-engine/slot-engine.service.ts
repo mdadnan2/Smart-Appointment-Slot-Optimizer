@@ -227,11 +227,13 @@ export class SlotEngineService {
 
     for (const interval of intervals) {
       let current = interval.start;
+      const intervalDayEnd = endOfDay(interval.start);
 
       while (isBefore(current, interval.end)) {
         const slotEnd = addMinutes(current, duration);
 
-        if (isAfter(slotEnd, interval.end)) {
+        // Stop if slot end exceeds interval end OR goes past the day boundary
+        if (isAfter(slotEnd, interval.end) || isAfter(slotEnd, intervalDayEnd)) {
           break;
         }
 

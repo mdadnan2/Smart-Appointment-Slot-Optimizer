@@ -3,9 +3,11 @@
 import { Check, X, MessageCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
 export default function AppointmentRequest() {
   const [requests, setRequests] = useState<any[]>([]);
+  const [confirmDialog, setConfirmDialog] = useState<{ show: boolean; id: string; status: string; message: string }>({ show: false, id: '', status: '', message: '' });
 
   useEffect(() => {
     fetchPendingAppointments();
@@ -23,8 +25,16 @@ export default function AppointmentRequest() {
   };
 
   const handleAction = async (id: string, status: string) => {
+    const message = status === 'CONFIRMED' 
+      ? 'Are you sure you want to confirm this appointment?' 
+      : 'Are you sure you want to reject this appointment?';
+    setConfirmDialog({ show: true, id, status, message });
+  };
+
+  const confirmAction = async () => {
     try {
-      await api.patch(`/appointments/${id}/status`, { status });
+      await api.patch(`/appointments/${confirmDialog.id}/status`, { status: confirmDialog.status });
+      setConfirmDialog({ show: false, id: '', status: '', message: '' });
       fetchPendingAppointments();
     } catch (error) {
       console.error('Failed to update appointment', error);
@@ -32,6 +42,7 @@ export default function AppointmentRequest() {
   };
 
   return (
+    <>
     <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 shadow-sm">
       <h2 className="text-sm font-bold text-blue-900 mb-4">Appointment Requests</h2>
       
@@ -69,5 +80,13 @@ export default function AppointmentRequest() {
         </div>
       )}
     </div>
+    {confirmDialog.show && (
+      <ConfirmDialog
+        message={confirmDialog.message}
+        onConfirm={confirmAction}
+        onCancel={() => setConfirmDialog({ show: false, id: '', status: '', message: '' })}
+      />
+    )}
+    </>
   );
 }

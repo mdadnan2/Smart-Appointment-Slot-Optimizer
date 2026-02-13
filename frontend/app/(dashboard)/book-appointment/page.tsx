@@ -210,7 +210,7 @@ export default function BookAppointment() {
                 <div className="text-center py-8">
                   <p className="text-gray-600 font-medium mb-2">No available slots for this date.</p>
                   <p className="text-sm text-gray-500">
-                    The provider may not be working on this day, or all slots are fully booked.
+                    Please try a different date or contact the provider for availability.
                   </p>
                 </div>
               ) : (

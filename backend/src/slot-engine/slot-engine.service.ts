@@ -28,6 +28,7 @@ export class SlotEngineService {
   /**
    * ✅ OPTIMIZED: Generate available slots with minimal database queries
    * Reduced from 4-5 queries to 1 single optimized query
+   * Fixed: Prevents slots from wrapping into next day
    */
   async generateAvailableSlots(
     providerId: string,

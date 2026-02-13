@@ -83,7 +83,7 @@ export default function Login() {
               <label className="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <a href="#" className="text-xs text-blue-600 hover:text-blue-700 font-medium hover:underline">
+              <a href="/forgot-password" className="text-xs text-blue-600 hover:text-blue-700 font-medium hover:underline">
                 Forgot password?
               </a>
             </div>

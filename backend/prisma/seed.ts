@@ -21,7 +21,13 @@ async function main() {
     },
   });
 
-  console.log('✅ Admin user created:', admin.email);
+  console.log('✅ Admin user created:', {
+    id: admin.id,
+    email: admin.email,
+    name: admin.name,
+    role: admin.role,
+    phone: admin.phone,
+  });
 
   // Create Provider Profile
   const provider = await prisma.provider.upsert({
@@ -35,10 +41,17 @@ async function main() {
     },
   });
 
-  console.log('✅ Provider profile created');
+  console.log('✅ Provider profile created:', {
+    id: provider.id,
+    userId: provider.userId,
+    specialty: provider.specialty,
+    timezone: provider.timezone,
+    defaultServiceDuration: provider.defaultServiceDuration,
+  });
 
   // Create Working Hours (Monday to Friday)
   const days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
+  const workingHours = [];
   
   for (const day of days) {
     const existing = await prisma.workingHour.findFirst({
@@ -49,7 +62,7 @@ async function main() {
     });
 
     if (!existing) {
-      await prisma.workingHour.create({
+      const wh = await prisma.workingHour.create({
         data: {
           providerId: provider.id,
           dayOfWeek: day as any,
@@ -59,28 +72,44 @@ async function main() {
           isActive: true,
         },
       });
+      workingHours.push(wh);
     }
   }
 
-  console.log('✅ Working hours created (Mon-Fri, 9 AM - 6 PM)');
+  console.log('✅ Working hours created:', workingHours.map(wh => ({
+    id: wh.id,
+    dayOfWeek: wh.dayOfWeek,
+    shiftType: wh.shiftType,
+    startTime: wh.startTime,
+    endTime: wh.endTime,
+    isActive: wh.isActive,
+  })));
 
   // Create Services
-  const services = [
+  const serviceData = [
     { name: 'General Consultation', duration: 30, price: 50 },
     { name: 'Follow-up Visit', duration: 15, price: 25 },
     { name: 'Extended Consultation', duration: 60, price: 100 },
   ];
 
-  for (const service of services) {
-    await prisma.service.create({
+  const createdServices = [];
+  for (const service of serviceData) {
+    const s = await prisma.service.create({
       data: {
         providerId: provider.id,
         ...service,
       },
     });
+    createdServices.push(s);
   }
 
-  console.log('✅ Services created');
+  console.log('✅ Services created:', createdServices.map(s => ({
+    id: s.id,
+    name: s.name,
+    duration: s.duration,
+    price: s.price,
+    isActive: s.isActive,
+  })));
 
   // Create Sample Patient
   const patient = await prisma.user.upsert({
@@ -95,7 +124,13 @@ async function main() {
     },
   });
 
-  console.log('✅ Sample patient created:', patient.email);
+  console.log('✅ Sample patient created:', {
+    id: patient.id,
+    email: patient.email,
+    name: patient.name,
+    role: patient.role,
+    phone: patient.phone,
+  });
 
   // Create Sample Appointments
   const service = await prisma.service.findFirst({
@@ -106,7 +141,7 @@ async function main() {
     const today = new Date();
     today.setHours(10, 0, 0, 0);
 
-    await prisma.appointment.create({
+    const appointment = await prisma.appointment.create({
       data: {
         providerId: provider.id,
         userId: patient.id,
@@ -118,7 +153,16 @@ async function main() {
       },
     });
 
-    console.log('✅ Sample appointment created');
+    console.log('✅ Sample appointment created:', {
+      id: appointment.id,
+      providerId: appointment.providerId,
+      userId: appointment.userId,
+      serviceId: appointment.serviceId,
+      startTime: appointment.startTime.toISOString(),
+      endTime: appointment.endTime.toISOString(),
+      status: appointment.status,
+      notes: appointment.notes,
+    });
   }
 
   console.log('\n🎉 Seeding completed!');

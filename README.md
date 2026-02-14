@@ -1,55 +1,132 @@
-# Smart Appointment Slot Optimizer
+<div align="center">
 
-A backend-driven appointment scheduling system that dynamically generates conflict-free time slots without storing them in the database.
+# 🎯 Smart Appointment Slot Optimizer
 
----
+### Enterprise-Grade Appointment Scheduling System with Real-Time Slot Generation
 
-## Project Overview
+[![Live Demo](https://img.shields.io/badge/demo-live-success?style=for-the-badge&logo=vercel)](https://getsmartslots.vercel.app/)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/mdadnan2/Smart-Appointment-Slot-Optimizer)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/mohammadadnan01/)
 
-This is a production-grade full-stack application designed to solve the complex problem of appointment scheduling with real-time slot availability. The system dynamically calculates available time slots by processing working hours, breaks, and existing bookings on-demand, eliminating the need for pre-generated slot storage.
+**[Live Demo](https://getsmartslots.vercel.app/)** • **[Documentation](#api-documentation)** • **[Installation](#installation--setup-local)** • **[Architecture](#system-architecture-backend-focused)**
 
-**Problem it solves:**  
-Traditional appointment systems store thousands of pre-generated slots in databases, leading to data bloat and synchronization issues. This application computes slots in real-time, ensuring accuracy and reducing database overhead.
-
-**Target users:**  
-Healthcare providers, consultants, service professionals, and any business requiring appointment-based scheduling.
-
-**Architecture focus:**  
-Backend-driven with modular architecture, transaction-based booking logic, and RESTful API design. The frontend serves as a clean interface to demonstrate backend capabilities.
+</div>
 
 ---
 
-## Key Features
+## 📋 Table of Contents
 
-### Backend Features
-- **Dynamic Slot Generation Engine** – Calculates available slots in real-time without database storage
-- **Transaction-Based Booking** – Prevents double-booking using database transactions and row-level locking
-- **JWT Authentication** – Secure token-based authentication with bcrypt password hashing
-- **Role-Based Access Control** – Admin (Provider) and User roles with permission management
-- **RESTful API Architecture** – Clean, modular API design following REST principles
-- **Working Hours Management** – Day-wise availability configuration with timezone support and shift types (Morning, Evening, Full Day)
-- **Break Management System** – Support for lunch breaks, prayer times, and emergency blocks with recurring options
-- **Holiday Management** – Support for holidays and special days off with recurring options
-- **Service Duration Handling** – Flexible appointment lengths based on service type
-- **Analytics & Reporting** – Dashboard statistics and monthly trend analysis
-- **Input Validation** – Request validation using class-validator and Zod schemas
-- **Error Handling** – Centralized exception handling with meaningful error responses
-
-### Frontend Features
-- **Responsive Dashboard** – Real-time statistics and appointment overview with charts
-- **Appointment Management** – View, update, and cancel appointments
-- **Authentication UI** – Login and registration with NextAuth.js integration
-- **Status Management** – Update appointment status (Pending, Confirmed, Completed, Cancelled, No Show)
-- **Mobile Responsive** – Fully responsive design for all screen sizes
-- **Interactive Charts** – Visual analytics using Recharts
-- **Toast Notifications** – User feedback for actions
-- **Confirm Dialogs** – Safe deletion and cancellation confirmations
+- [Overview](#-overview)
+- [Demo Credentials](#-demo-credentials)
+- [Key Features](#-key-features)
+- [Tech Stack](#-tech-stack)
+- [System Architecture](#system-architecture-backend-focused)
+- [API Documentation](#api-documentation)
+- [Database Design](#database-design)
+- [Installation & Setup](#installation--setup-local)
+- [Deployment](#deployment)
+- [Author](#-author)
 
 ---
 
-## Tech Stack
+## 🚀 Overview
 
-### 🔹 Backend
+A **production-ready full-stack application** that revolutionizes appointment scheduling by dynamically generating conflict-free time slots in real-time, eliminating the need for database storage of pre-generated slots.
+
+### The Problem
+Traditional appointment systems store thousands of pre-generated slots in databases, causing:
+- Database bloat and performance degradation
+- Synchronization issues between slots and bookings
+- Maintenance overhead for slot regeneration
+- Scalability challenges
+
+### The Solution
+This system computes available slots **on-demand** by processing:
+- Provider working hours and availability
+- Break intervals (lunch, prayer times, emergency blocks)
+- Existing appointments and bookings
+- Service duration requirements
+- Holiday and special day-off management
+
+### Target Audience
+- 🏥 Healthcare providers and clinics
+- 💼 Consultants and professional services
+- 💇 Salons and beauty services
+- 🎓 Educational institutions
+- 🔧 Service-based businesses
+
+### Technical Highlights
+- **Backend-Driven Architecture** with modular design patterns
+- **Transaction-Based Booking** preventing double-booking with row-level locking
+- **RESTful API Design** following industry best practices
+- **JWT Authentication** with role-based access control
+- **Real-Time Slot Calculation** with optimized algorithms
+
+---
+
+## 🎫 Demo Credentials
+
+Test the application with these pre-configured accounts:
+
+### 👨‍⚕️ Provider Account (Admin)
+```
+Email: admin@test.com
+Password: password123
+Role: ADMIN
+```
+**Capabilities:**
+- Manage services and pricing
+- Configure working hours and breaks
+- View all appointments and analytics
+- Update appointment statuses
+- Access admin dashboard
+
+### 👤 Patient Account (User)
+```
+Email: patient@test.com
+Password: password123
+Role: USER
+```
+**Capabilities:**
+- Browse available providers
+- Book appointments
+- View personal appointment history
+- Cancel appointments
+- Receive booking confirmations
+
+> **Note:** You can also register a new account to test the registration flow.
+
+---
+
+## ✨ Key Features
+
+### 🔧 Backend Features
+- ⚡ **Dynamic Slot Generation Engine** – Real-time slot calculation without database storage
+- 🔒 **Transaction-Based Booking** – Prevents double-booking with row-level locking
+- 🔐 **JWT Authentication** – Secure token-based auth with bcrypt password hashing
+- 👥 **Role-Based Access Control** – Admin (Provider) and User (Patient) roles
+- 🏗️ **RESTful API Architecture** – Clean, modular design following REST principles
+- ⏰ **Working Hours Management** – Day-wise availability with timezone support
+- ☕ **Break Management System** – Lunch breaks, prayer times, emergency blocks
+- 🏖️ **Holiday Management** – Recurring holidays and special days off
+- 📊 **Analytics & Reporting** – Dashboard statistics and monthly trends
+- ✅ **Input Validation** – Request validation using class-validator and Zod
+- 🛡️ **Error Handling** – Centralized exception handling with meaningful responses
+
+### 🎨 Frontend Features
+- 📱 **Responsive Dashboard** – Real-time statistics with interactive charts
+- 📅 **Appointment Management** – View, update, and cancel appointments
+- 🔑 **Authentication UI** – Login and registration with NextAuth.js
+- 🎯 **Status Management** – Track appointment lifecycle (Pending → Confirmed → Completed)
+- 📊 **Interactive Charts** – Visual analytics using Recharts
+- 🔔 **Toast Notifications** – Real-time user feedback
+- ✨ **Modern UI/UX** – Clean interface with Tailwind CSS
+
+---
+
+## 🛠️ Tech Stack
+
+### Backend
 - **Language:** TypeScript
 - **Framework:** NestJS (Node.js)
 - **Database:** PostgreSQL
@@ -59,7 +136,7 @@ Backend-driven with modular architecture, transaction-based booking logic, and R
 - **Date Handling:** date-fns, date-fns-tz
 - **Architecture:** Modular architecture with dependency injection
 
-### 🔹 Frontend
+### Frontend
 - **Framework:** Next.js 14 (App Router)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
@@ -70,11 +147,11 @@ Backend-driven with modular architecture, transaction-based booking logic, and R
 - **Date Utilities:** date-fns
 - **Utilities:** clsx, tailwind-merge
 
-### 🔹 DevOps / Tools
+### DevOps & Tools
 - **Version Control:** Git
 - **Package Manager:** npm
 - **Database Migration:** Prisma Migrate
-- **Deployment:** Vercel (Frontend), Render/Railway (Backend), Supabase/Neon (Database)
+- **Deployment:** Vercel (Frontend), Render (Backend), Neon (Database)
 - **Environment Management:** dotenv
 
 ---
@@ -387,8 +464,20 @@ Frontend will run on: `http://localhost:3001`
 ### Step 4: Verify Installation
 
 1. Open browser and navigate to `http://localhost:3001`
-2. Register a new user account
-3. Backend API documentation (if configured): `http://localhost:3000/api`
+2. Login with demo credentials or register a new account
+3. Test the appointment booking flow
+4. Backend API: `http://localhost:3000/api`
+
+**Quick Test:**
+```bash
+# Test backend health
+curl http://localhost:3000/api
+
+# Test authentication
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"patient@test.com","password":"password123"}'
+```
 
 ---
 
@@ -646,39 +735,71 @@ npm run test:cov
 
 ---
 
-## Screenshots / Demo
+## 🎬 Live Demo
 
-**Live Demo:** [Coming Soon]
+**🌐 Live Application:** [https://getsmartslots.vercel.app/](https://getsmartslots.vercel.app/)
 
-**Screenshots:**
-- Dashboard with analytics
-- Appointment booking interface
-- Provider management panel
-- Slot availability calendar
+**Test the application with:**
+- Provider dashboard and analytics
+- Real-time slot availability
+- Appointment booking flow
+- Admin management features
 
-*(Screenshots will be added to `/docs/screenshots` directory)*
-
----
-
-## Author
-
-**Your Name**  
-Backend Developer
-
-Experienced in building scalable backend systems with Node.js, NestJS, and PostgreSQL. This project demonstrates expertise in API design, database architecture, transaction management, and real-world problem-solving with clean, maintainable code.
-
-**Connect:**
-- GitHub: [github.com/yourusername](https://github.com/yourusername)
-- LinkedIn: [linkedin.com/in/yourprofile](https://linkedin.com/in/yourprofile)
-- Email: your.email@example.com
+**Demo Features:**
+- ✅ Fully functional booking system
+- ✅ Real-time slot generation
+- ✅ Interactive dashboard with charts
+- ✅ Mobile-responsive design
+- ✅ Complete CRUD operations
 
 ---
 
-## License
+## 👨‍💻 Author
+
+**Mohammad Adnan**  
+*Full-Stack Developer | Backend Specialist*
+
+Passionate about building scalable, production-ready systems with modern technologies. This project showcases expertise in:
+- 🏗️ Enterprise-grade backend architecture
+- 🔐 Secure authentication and authorization
+- 💾 Database design and optimization
+- ⚡ Real-time algorithm development
+- 🎨 Full-stack application development
+
+### Connect With Me
+
+<div align="center">
+
+[![GitHub](https://img.shields.io/badge/GitHub-mdadnan2-181717?style=for-the-badge&logo=github)](https://github.com/mdadnan2/Smart-Appointment-Slot-Optimizer)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Mohammad_Adnan-0077B5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/mohammadadnan01/)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Visit_Site-FF5722?style=for-the-badge&logo=google-chrome)](https://mdadnan.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-GetSmartSlots-success?style=for-the-badge&logo=vercel)](https://getsmartslots.vercel.app/)
+
+</div>
+
+### 📫 Get In Touch
+- 💼 **LinkedIn:** [linkedin.com/in/mohammadadnan01](https://www.linkedin.com/in/mohammadadnan01/)
+- 🐙 **GitHub:** [github.com/mdadnan2](https://github.com/mdadnan2)
+- 🌐 **Portfolio:** [mdadnan.vercel.app](https://mdadnan.vercel.app/)
+- 🚀 **Live Project:** [getsmartslots.vercel.app](https://getsmartslots.vercel.app/)
+
+---
+
+<div align="center">
+
+### ⭐ If you find this project useful, please consider giving it a star!
+
+**Built with ❤️ by Mohammad Adnan**
+
+</div>
+
+---
+
+## 📄 License
 
 MIT License
 
-Copyright (c) 2024
+Copyright (c) 2026 Mohammad Adnan
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
